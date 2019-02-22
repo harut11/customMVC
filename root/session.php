@@ -4,7 +4,7 @@ namespace root;
 
 class session
 {
-    private function __construct()
+    public function __construct()
     {
         session_start();
         $_SESSION['previous_url'] = isset($_SESSION['current_url']) ? $_SESSION['current_url'] : null;

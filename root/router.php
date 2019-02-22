@@ -8,30 +8,19 @@ class router
 
     private function __construct()
     {
-        $action = $this->getAction();
-        $result = $this->getController()->$action();
+        $action = self::getAction();
+        $result = self::getController()->$action();
 
-        if(is_object($result)) {
-            switch (get_class($result)) {
-                case 'root\\View':
-                    echo $result;
-                    break;
-                case 'root\\Redirector':
-                    $result->setHeader();
-                    break;
-                default:
-                    break;
-            }
-        }
+        echo $result;
     }
 
     private function getController()
     {
         $uri = $_SERVER['REQUEST_URI'];
         $parts = array_values(array_filter(explode('/', $uri)));
-        $controllerName = !empty($parts[0]) ? ucfirst($parts[0]) : 'home';
-        $controllerClassName = "\\app\\controllers\\{$controllerName}Controller";
-        return new $controllerClassName;
+        $controllerName = !empty($parts[0]) ? ucfirst($parts[0]) : 'Home';
+        $controllerClassName = "\\app\\Controllers\\{$controllerName}Controller";
+        return new $controllerClassName();
     }
 
     private function getAction()

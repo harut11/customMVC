@@ -7,14 +7,14 @@ require_once (base_path . separator . 'root' . separator . 'functions.php');
 
 spl_autoload_register(function ($class) {
 
-    $path = dirname(__FILE__) . separator . 'classes' . separator . $class . '.php';
+    $path = base_path($class) . '.php';
 
     if(file_exists($path)) {
         require $path;
     } else {
-        echo 'Not found' . $class . 'name';
+        echo 'Can not find ' . $class . ' class';
         exit();
     }
 });
 
-dd(__FILE__);
+getRouter();
