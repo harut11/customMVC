@@ -46,8 +46,3 @@ function view($view, $title) {
 function getRouter() {
     return \root\router::getInstance();
 }
-
-function validate($request, $rules) {
-    $obj = new \root\validation();
-    return $obj;
-}
