@@ -46,3 +46,7 @@ function view($view, $title) {
 function getRouter() {
     return \root\router::getInstance();
 }
+
+function get_connection() {
+    return root\Database\connection::getInstance();
+}

@@ -10,7 +10,11 @@ class validation
     {
         foreach ($request as $field => $value) {
             if(isset($rules[$field])) {
-                $this->errors = self::defineRules($field, $rules[$field], $request);
+                $fieldErrors = self::defineRules($field, $rules[$field], $request);
+
+                if(empty($fieldErrors)) {
+                    $this->errors[$field] = $fieldErrors;
+                }
             }
         }
     }
@@ -26,30 +30,39 @@ class validation
 
             if(count($attr) > 1) {
                 $condition = $attr[1];
+
+                $success = self::validateFields($field, $fullName, $condition, $request);
+
+                if(!$success) {
+                    $errors = self::getErrorMessage($fullName, $attr);
+                }
             }
-
-            $success = '';
         }
+        return $errors;
+    }
 
+    public function validateFields($field, $fullName, $condition, $request)
+    {
         switch ($fullName) {
             case 'required':
-                return !empty($rules);
+                return !empty($request[$field]);
                 break;
             case 'min':
-                return isset($rules) && strlen($value) <= $condition;
-                    break;
+                return isset($rules) && strlen($request[$field]) <= $condition;
+                break;
             case 'max':
-                return isset($rules) && strlen($value) >= $condition;
-                    break;
+                return isset($rules) && strlen($request[$field]) >= $condition;
+                break;
             case 'unique':
-                echo self::getErrorMessage('unique');
+                return true;
                 break;
             case 'email':
                 $pattern = "/\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/";
-                preg_match($value, $pattern, $matches);
+                preg_match($request[$field], $pattern, $matches);
                 return count($matches) > 0;
                 break;
             default:
+                return true;
                 break;
         }
     }
@@ -68,15 +81,17 @@ class validation
 
         if(isset($messages[$rule])) {
             $message = $messages[$rule];
+            return $message;
         }
-        return$message;
+        return false;
     }
 
     public function getErrors()
     {
         if(!empty($this->errors)) {
             $this->errors;
-        } else return false;
+        }
+        return false;
     }
 
 }

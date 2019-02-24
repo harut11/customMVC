@@ -11,7 +11,7 @@ class view
        $path = views_path(str_replace('.', '/', $view) . '.php');
        if(file_exists($path)) {
            ob_start();
-           require $path;
+           require_once $path;
            return ob_get_clean();
        }
        return null;

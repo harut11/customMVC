@@ -10,7 +10,7 @@ spl_autoload_register(function ($class) {
     $path = base_path($class) . '.php';
 
     if(file_exists($path)) {
-        require $path;
+        require_once $path;
     } else {
         echo 'Can not find ' . $class . ' class';
         exit();
