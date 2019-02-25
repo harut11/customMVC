@@ -11,7 +11,10 @@ class forValidate
         $err = $obj->getErrors();
 
         if($err) {
-            echo $err;
+            session::flush('errors', $err);
+            session::flush('old', $request);
+            redirect(session::get('previous_url'))->setHeader();
+            exit();
         }
     }
 }

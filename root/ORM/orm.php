@@ -25,7 +25,7 @@ class orm
 
     public function get()
     {
-        $this->sql = "SELECT * FROM " . self::getTable();
+        $this->sql = "SELECT * FROM " . $this->getTable();
 
         if(!empty($this->limit)) {
             $this->sql .= " LIMIT " . $this->limit;
@@ -44,10 +44,10 @@ class orm
             $condition = implode(', ', $this->order);
             $this->sql .= ' ORDER BY ' . $condition;
         }
-        return self::execute();
+        return $this->execute();
     }
 
-    public function create($attr)
+    public function create(array $attr)
     {
         $table = self::getTable();
 
@@ -55,9 +55,9 @@ class orm
         $vals = implode(', ', array_map(function ($item) {
             return "\" $item\"";
         }, $attr));
-        $this->sql = "INSERT INTO $table ($cols) VALUES $vals";
+        $this->sql = "INSERT INTO $table ($cols) VALUES ($vals)";
 
-        return self::execute();
+        return $this->execute();
     }
 
     public function where($col, $operator, $val)
@@ -97,6 +97,6 @@ class orm
 
     public function execute()
     {
-        return get_connection()->query($this->sql);
+        get_connection()->query($this->sql);
     }
 }

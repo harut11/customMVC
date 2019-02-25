@@ -8,6 +8,7 @@ class router
 
     private function __construct()
     {
+        new session();
         $action = self::getAction();
         $result = self::getController()->$action();
 

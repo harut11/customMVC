@@ -11,8 +11,7 @@ class validation
         foreach ($request as $field => $value) {
             if(isset($rules[$field])) {
                 $fieldErrors = self::defineRules($field, $rules[$field], $request);
-
-                if(empty($fieldErrors)) {
+                if(!empty($fieldErrors)) {
                     $this->errors[$field] = $fieldErrors;
                 }
             }
@@ -48,13 +47,13 @@ class validation
                 return !empty($request[$field]);
                 break;
             case 'min':
-                return isset($rules) && strlen($request[$field]) <= $condition;
+                return isset($request[$field]) && strlen($request[$field]) >= $condition;
                 break;
             case 'max':
-                return isset($rules) && strlen($request[$field]) >= $condition;
+                return isset($request[$field]) && strlen($request[$field]) <= $condition;
                 break;
             case 'unique':
-                return true;
+
                 break;
             case 'email':
                 $pattern = "/\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/";
@@ -71,8 +70,8 @@ class validation
     {
         $messages =  [
             'required' => 'This field is required',
-            'min' => 'This field value must be higher then ' . $condition,
-            'max' => 'This field value must be lower then ' . $condition,
+            'min' => 'This field value must be higher then ' . $condition[0],
+            'max' => 'This field value must be lower then ' . $condition[0],
             'string' => 'This field value must be string',
             'number' => 'This field value must be number',
             'email' => 'Email address is not valid',
@@ -89,7 +88,7 @@ class validation
     public function getErrors()
     {
         if(!empty($this->errors)) {
-            $this->errors;
+            return $this->errors;
         }
         return false;
     }

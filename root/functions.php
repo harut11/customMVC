@@ -48,5 +48,26 @@ function getRouter() {
 }
 
 function get_connection() {
-    return root\Database\connection::getInstance();
+    return \root\Database\connection::getInstance();
+}
+
+function bcrypt($text) {
+    return sha1($text);
+}
+
+function send_email($email, $token) {
+    $obj =  new \root\mail($email, $token);
+    $obj->sendMessage();
+}
+
+function generate_token($length = 40) {
+    $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charLength = strlen($chars);
+
+    $randomText = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomText .= $chars[rand(0, $charLength - 1)];
+    }
+    return $randomText;
 }
