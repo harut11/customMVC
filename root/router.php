@@ -2,6 +2,8 @@
 
 namespace root;
 
+use function Couchbase\basicEncoderV1;
+
 class router
 {
     use Singleton;
@@ -9,17 +11,31 @@ class router
     private function __construct()
     {
         new session();
-        $action = self::getAction();
-        $result = self::getController()->$action();
-
-        echo $result;
+        $this->getAction();
     }
 
-    private function getController()
+    private function getController($action)
     {
-        $uri = $_SERVER['REQUEST_URI'];
-        $parts = array_values(array_filter(explode('/', $uri)));
-        $controllerName = !empty($parts[0]) ? ucfirst($parts[0]) : 'Home';
+        $controllerName = null;
+
+        switch ($action) {
+            case 'login':
+                $controllerName = 'Auth';
+                break;
+            case 'register':
+                $controllerName = 'Auth';
+                break;
+            case 'index':
+                $controllerName = 'Home';
+                break;
+            case 'registerSubmit':
+                $controllerName = 'Auth';
+                break;
+            case 'verify':
+                $controllerName = 'Auth';
+                break;
+        }
+
         $controllerClassName = "\\app\\Controllers\\{$controllerName}Controller";
         return new $controllerClassName();
     }
@@ -27,7 +43,10 @@ class router
     private function getAction()
     {
         $uri = $_SERVER['REQUEST_URI'];
-        $parts = array_values(array_filter(explode('/', $uri)));
-        return count($parts) > 1 ? kebabToCamel($parts[1]): 'index';
+        $path = explode('/', parse_url($uri, PHP_URL_PATH));
+
+        $action =  $path[1] ? kebabToCamel($path[1]): 'index';
+
+        return $this->getController($action)->$action();
     }
 }

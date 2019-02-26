@@ -27,21 +27,40 @@ class AuthController extends forValidate
         ]);
 
         Users::query()->create([
-            'first_name' => $_REQUEST['first_name'],
-            'last_name' => $_REQUEST['last_name'],
-            'email' => $_REQUEST['email'],
-            'password' => bcrypt($_REQUEST['password']),
+            'first_name' => trim($_REQUEST['first_name']),
+            'last_name' => trim($_REQUEST['last_name']),
+            'email' => trim($_REQUEST['email']),
+            'password' => trim(bcrypt($_REQUEST['password'])),
             'email_verified' => generate_token()
         ]);
 
-        send_email($_REQUEST['email'], $_REQUEST['email_verified']);
+        $new_user_arr = Users::query()->maxId();
+        $new_user_id = $new_user_arr[0]['MAX(id)'];
+
+        $token_arr = Users::query()->where('id', '=', $new_user_id)->select('email_verified');
+        $token = $token_arr[0]['email_verified'];
+
+        send_email($_REQUEST['email'], $token);
         redirect('/')->setHeader();
     }
 
-    public function verify($request)
+    public function verify()
     {
-        $this->validate($request, [
-           'email_verified' => 'required|exists'
-        ]);
+        $uri = $_SERVER['REQUEST_URI'];
+        $params = parse_url($uri, PHP_URL_QUERY);
+        $token = explode('token=', $params);
+
+        $user = Users::query()->where('email_verified', '=', $token[1])->get();
+        if ($user) {
+            $user_token = $user[0]['email_verified'];
+
+            if($user_token === $token[1]) {
+                Users::query()->where('email_verified', '=', $token[1])->update([
+                    'email_verified' => null,
+                ]);
+                return view('email.verified', 'Email verification message');
+            }
+        }
+        return view('email.allready', 'Email is allready verified');
     }
 }

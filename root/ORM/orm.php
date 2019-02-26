@@ -36,26 +36,53 @@ class orm
         }
 
         if(!empty($this->where)) {
-            $condition = implode(' AND ', $this->where);
-            $this->sql .= ' WHERE '. $condition;
+            $this->sql .= " WHERE " . $this->where;
         }
 
         if(!empty($this->order)) {
             $condition = implode(', ', $this->order);
             $this->sql .= ' ORDER BY ' . $condition;
         }
+
+        return $this->execute();
+    }
+
+    public function select($row)
+    {
+        $this->sql = "SELECT $row FROM " . $this->getTable() . " WHERE $this->where";
+
+        return $this->execute();
+    }
+
+    public function maxId()
+    {
+        $this->sql = "SELECT MAX(id) FROM " . $this->getTable();
         return $this->execute();
     }
 
     public function create(array $attr)
     {
-        $table = self::getTable();
+        $table = $this->getTable();
 
         $cols = implode(', ', array_keys($attr));
         $vals = implode(', ', array_map(function ($item) {
-            return "\" $item\"";
+            return "\"$item\"";
         }, $attr));
         $this->sql = "INSERT INTO $table ($cols) VALUES ($vals)";
+
+        return $this->execute();
+    }
+
+    public function update(array  $attr)
+    {
+        $table = $this->getTable();
+
+        $cols = implode(', ', array_keys($attr));
+        $vals = implode(',', array_map(function ($item) {
+            return "\"$item\"";
+        }, $attr));
+
+        $this->sql = "UPDATE $table SET $cols = $vals WHERE $this->where";
 
         return $this->execute();
     }
@@ -68,12 +95,15 @@ class orm
                    $val[$key] = "\"$v\"";
                 }
             }
-            $val = "(" . implode(', ', $val) . ")";
-        } else if(is_string($val)) {
-            $val = "\"$val\"";
+            $val = "(" . implode(',', $val) . ")";
+        }
+
+        if(is_string($val)) {
+            $val = "'$val'";
         }
 
         $this->where = "$col $operator $val";
+
         return $this;
     }
 
@@ -97,6 +127,6 @@ class orm
 
     public function execute()
     {
-        get_connection()->query($this->sql);
+        return get_connection()->query($this->sql);
     }
 }

@@ -40,10 +40,10 @@
             <form class="form-inline my-2 my-lg-0">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/auth/login">Login</a>
+                        <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/auth/register">Register</a>
+                        <a class="nav-link" href="/register">Register</a>
                     </li>
                 </ul>
             </form>

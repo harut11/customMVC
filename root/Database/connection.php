@@ -21,7 +21,8 @@ class connection
 
     public function query($sql)
     {
-        $result = $this->PDO->query($sql);
+        $result = $this->PDO->prepare($sql);
+        $result->execute();
         if($result) {
           return $result->fetchAll(PDO::FETCH_ASSOC);
         }

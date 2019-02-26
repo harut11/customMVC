@@ -11,7 +11,7 @@ class validation
         foreach ($request as $field => $value) {
             if(isset($rules[$field])) {
                 $fieldErrors = self::defineRules($field, $rules[$field], $request);
-                if(!empty($fieldErrors)) {
+                if(empty($fieldErrors)) {
                     $this->errors[$field] = $fieldErrors;
                 }
             }
@@ -51,9 +51,6 @@ class validation
                 break;
             case 'max':
                 return isset($request[$field]) && strlen($request[$field]) <= $condition;
-                break;
-            case 'unique':
-
                 break;
             case 'email':
                 $pattern = "/\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/";

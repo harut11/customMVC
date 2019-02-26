@@ -35,7 +35,7 @@ class mail
             $mail->addAddress($this->email, 'Sajid');
             $mail->isHTML(true);
             $mail->Subject = 'Please verify your email';
-            $mail->Body = 'For verify your email please click <a href="">there</a>';
+            $mail->Body = 'For verify your email please click <a href="http://custommvc.local/verify?token='. $this->token .'" >there</a>';
             $mail->send();
 
         } catch (Exception $e) {
