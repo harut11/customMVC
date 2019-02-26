@@ -11,7 +11,7 @@ class validation
         foreach ($request as $field => $value) {
             if(isset($rules[$field])) {
                 $fieldErrors = self::defineRules($field, $rules[$field], $request);
-                if(empty($fieldErrors)) {
+                if(!empty($fieldErrors)) {
                     $this->errors[$field] = $fieldErrors;
                 }
             }

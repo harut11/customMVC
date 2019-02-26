@@ -2,8 +2,6 @@
 
 namespace root;
 
-use function Couchbase\basicEncoderV1;
-
 class router
 {
     use Singleton;

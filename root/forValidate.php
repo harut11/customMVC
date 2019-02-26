@@ -13,8 +13,10 @@ class forValidate
         if($err) {
             session::flush('errors', $err);
             session::flush('old', $request);
+
             redirect(session::get('previous_url'))->setHeader();
             exit();
         }
+        session::delete('flush');
     }
 }
