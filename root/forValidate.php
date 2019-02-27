@@ -4,7 +4,7 @@ namespace root;
 
 class forValidate
 {
-    public function validate($request, $rules)
+    public function validate($request, $page, $rules)
     {
         $obj = new validation();
         $obj->setVars($request, $rules);
@@ -14,9 +14,13 @@ class forValidate
             session::flush('errors', $err);
             session::flush('old', $request);
 
-            redirect(session::get('previous_url'))->setHeader();
+            if($page === 'register') {
+              redirect('/register')->setHeader();
+            }
+            if($page === 'login') {
+                redirect('/login')->setHeader();
+            }
             exit();
         }
-        session::delete('flush');
     }
 }

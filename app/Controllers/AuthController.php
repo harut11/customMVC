@@ -19,11 +19,12 @@ class AuthController extends forValidate
 
     public function registerSubmit()
     {
-        $this->validate($_REQUEST, [
-            'first_name' => 'required|min:3|max:50',
-            'last_name' => 'required|min:3|max:50',
+        $this->validate($_REQUEST, 'register', [
+            'first_name' => 'required|min:3|max:40|string',
+            'last_name' => 'required|min:3|max:50|string',
             'email' => 'required|email|unique',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
+            'confirm_password' => 'required|confirm'
         ]);
 
         Users::query()->create([
@@ -42,6 +43,16 @@ class AuthController extends forValidate
 
         send_email($_REQUEST['email'], $token);
         redirect('/')->setHeader();
+    }
+
+    public function loginSubmit()
+    {
+        $this->validate($_REQUEST, 'login', [
+           'email2' => 'required|exists:users',
+           'password2' => 'required|exists:users'
+        ]);
+
+
     }
 
     public function verify()

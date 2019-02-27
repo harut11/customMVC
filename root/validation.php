@@ -2,15 +2,19 @@
 
 namespace root;
 
+use app\Models\Users;
+
 class validation
 {
     public $errors = [];
+    private $condition = null;
+    private $ruleName = null;
 
     public function setVars($request, $rules)
     {
         foreach ($request as $field => $value) {
             if(isset($rules[$field])) {
-                $fieldErrors = self::defineRules($field, $rules[$field], $request);
+                $fieldErrors = $this->defineRules($field, $rules[$field], $request);
                 if(!empty($fieldErrors)) {
                     $this->errors[$field] = $fieldErrors;
                 }
@@ -23,39 +27,51 @@ class validation
         $rules = explode('|', $rules);
         $errors = [];
 
-        foreach ($rules as $rule) {
+        foreach ($rules as $key => $rule) {
             $attr = explode(':', $rule);
-            $fullName = $attr[0];
-
+            $this->ruleName = $attr[0];
             if(count($attr) > 1) {
-                $condition = $attr[1];
+                $this->condition = $attr[1];
+            }
 
-                $success = self::validateFields($field, $fullName, $condition, $request);
+            $success = $this->validateFields($field, $this->ruleName, $this->condition, $request);
 
-                if(!$success) {
-                    $errors = self::getErrorMessage($fullName, $attr);
-                }
+            if(!$success) {
+                $errors = $this->getErrorMessage($this->ruleName, $attr);
             }
         }
         return $errors;
     }
 
-    public function validateFields($field, $fullName, $condition, $request)
+    public function validateFields($field, $rule, $condition, $request)
     {
-        switch ($fullName) {
+        switch ($rule) {
             case 'required':
                 return !empty($request[$field]);
                 break;
             case 'min':
-                return isset($request[$field]) && strlen($request[$field]) >= $condition;
+                return !empty($request[$field]) && strlen($request[$field]) >= $condition;
                 break;
             case 'max':
-                return isset($request[$field]) && strlen($request[$field]) <= $condition;
+                return !empty($request[$field]) && strlen($request[$field]) <= $condition;
                 break;
             case 'email':
-                $pattern = "/\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/";
-                preg_match($request[$field], $pattern, $matches);
-                return count($matches) > 0;
+                $pattern = "/[a-z0-9]+[_a-z0-9\.-]*[a-z0-9]+@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,20})/";
+                return !empty($request[$field]) && preg_match($pattern, $request[$field]);
+                break;
+            case 'string':
+                $pattern = "/^(([A-Za-z]+[\s]{1}[A-Za-z]+)|([A-Za-z]+))$/";
+                return !empty($request[$field]) && preg_match($pattern, $request[$field]);
+                break;
+            case 'unique':
+                $existingUser = Users::query()->where('email', '=', $request[$field])->get();
+                return !$existingUser;
+                break;
+            case 'confirm':
+                return $_REQUEST['password'] === $request[$field];
+                break;
+            case 'exists':
+
                 break;
             default:
                 return true;
@@ -67,12 +83,13 @@ class validation
     {
         $messages =  [
             'required' => 'This field is required',
-            'min' => 'This field value must be higher then ' . $condition[0],
-            'max' => 'This field value must be lower then ' . $condition[0],
+            'min' => 'This field value must be higher then ' . $condition[1],
+            'max' => 'This field value must be lower then ' . $condition[1],
             'string' => 'This field value must be string',
             'number' => 'This field value must be number',
             'email' => 'Email address is not valid',
-            'unique' => 'The field must be unique value'
+            'unique' => 'The field must be unique value',
+            'confirm' => 'Please enter a same password'
         ];
 
         if(isset($messages[$rule])) {

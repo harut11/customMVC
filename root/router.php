@@ -15,9 +15,13 @@ class router
     private function getController($action)
     {
         $controllerName = null;
+//        if ($action !== 'register') {
+//            session::delete('flush');
+//        }
 
         switch ($action) {
             case 'login':
+                middleware('auth');
                 $controllerName = 'Auth';
                 break;
             case 'register':
@@ -32,6 +36,8 @@ class router
             case 'verify':
                 $controllerName = 'Auth';
                 break;
+            case 'loginSubmit':
+                $controllerName = 'Auth';
         }
 
         $controllerClassName = "\\app\\Controllers\\{$controllerName}Controller";

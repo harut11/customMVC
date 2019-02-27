@@ -72,6 +72,10 @@ function generate_token($length = 40) {
     return $randomText;
 }
 
-function session_get($key) {
-    return array_values(array_filter(\root\session::get($key)));
+function session_get_flush($key ,$param) {
+    return \root\session::getFlush($key, $param);
+}
+
+function middleware($condition) {
+    return new \root\middleware($condition);
 }
