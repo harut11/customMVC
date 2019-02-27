@@ -36,7 +36,8 @@ class orm
         }
 
         if(!empty($this->where)) {
-            $this->sql .= " WHERE " . $this->where;
+            $condition = implode(" AND ", $this->where);
+            $this->sql .= " WHERE " . $condition;
         }
 
         if(!empty($this->order)) {
@@ -102,7 +103,7 @@ class orm
             $val = "'$val'";
         }
 
-        $this->where = "$col $operator $val";
+        $this->where[] = "$col $operator $val";
 
         return $this;
     }

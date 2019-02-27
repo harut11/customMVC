@@ -71,7 +71,12 @@ class validation
                 return $_REQUEST['password'] === $request[$field];
                 break;
             case 'exists':
-
+                if($condition === 'users') {
+                    $existsEmail = Users::query()->where('email', '=', $request['email2'])
+                        ->where('password', '=', bcrypt($request['password2']))
+                        ->where('email_verified', '=', ' ')->get();
+                    return $existsEmail;
+                }
                 break;
             default:
                 return true;
@@ -89,7 +94,8 @@ class validation
             'number' => 'This field value must be number',
             'email' => 'Email address is not valid',
             'unique' => 'The field must be unique value',
-            'confirm' => 'Please enter a same password'
+            'confirm' => 'Please enter a same password',
+            'exists' => 'Email or password are written wrong'
         ];
 
         if(isset($messages[$rule])) {
