@@ -79,3 +79,9 @@ function session_get_flush($key ,$param) {
 function middleware($condition) {
     return new \root\middleware($condition);
 }
+
+function isAuth() {
+    if(isset($_SESSION['access_token']) && isset($_SESSION['user_data'])) {
+        return true;
+    } else return false;
+}

@@ -50,7 +50,14 @@ class orm
 
     public function select($row)
     {
-        $this->sql = "SELECT $row FROM " . $this->getTable() . " WHERE $this->where";
+        if(is_array($this->where)) {
+            $where = $this->where[0];
+        }
+        if(is_array($row)) {
+            $row = implode(', ', $row);
+        }
+
+        $this->sql = "SELECT $row FROM " . $this->getTable() . " WHERE $where";
 
         return $this->execute();
     }
@@ -83,7 +90,12 @@ class orm
             return "\"$item\"";
         }, $attr));
 
-        $this->sql = "UPDATE $table SET $cols = $vals WHERE $this->where";
+        if(is_array($this->where)) {
+            $where = $this->where[0];
+        }
+
+
+        $this->sql = "UPDATE $table SET $cols = $vals WHERE $where";
 
         return $this->execute();
     }

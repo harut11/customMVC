@@ -36,7 +36,7 @@ class validation
 
             $success = $this->validateFields($field, $this->ruleName, $this->condition, $request);
 
-            if(!$success) {
+            if(!$success && !$errors) {
                 $errors = $this->getErrorMessage($this->ruleName, $attr);
             }
         }
@@ -75,8 +75,8 @@ class validation
                     $existsEmail = Users::query()->where('email', '=', $request['email2'])
                         ->where('password', '=', bcrypt($request['password2']))
                         ->where('email_verified', '=', ' ')->get();
-                    return $existsEmail;
                 }
+                return $existsEmail;
                 break;
             default:
                 return true;

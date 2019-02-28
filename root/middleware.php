@@ -13,7 +13,15 @@ class middleware
     {
         switch ($condition) {
             case 'auth':
-
+                if(!isAuth()) {
+                    return true;
+                } else {
+                    redirect('/')->setHeader();
+                    return false;
+                }
+                break;
+            default:
+                return true;
                 break;
         }
     }

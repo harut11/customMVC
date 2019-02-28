@@ -18,6 +18,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <?php if(isAuth()): ?>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">Page 1</a>
@@ -37,16 +38,27 @@
                     <a class="nav-link" href="#">Page 3</a>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Register</a>
-                    </li>
-                </ul>
-            </form>
+            <?php endif; ?>
+            <?php if(!isAuth()): ?>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">Register</a>
+                </li>
+            </ul>
+            <?php endif; ?>
+            <?php if(isAuth()): ?>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+            <?php endif; ?>
         </div>
     </nav>
     <!-- Navbar Section End -->

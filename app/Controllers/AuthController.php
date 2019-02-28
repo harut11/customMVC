@@ -4,6 +4,7 @@ namespace app\Controllers;
 
 use root\forValidate;
 use app\Models\Users;
+use root\session;
 
 class AuthController extends forValidate
 {
@@ -15,6 +16,13 @@ class AuthController extends forValidate
     public function register()
     {
         return view('auth.register', 'Register and be our friend!');
+    }
+
+    public function logout()
+    {
+        session::delete('access_token');
+        session::delete('user_data');
+        redirect('/')->setHeader();
     }
 
     public function registerSubmit()
@@ -49,10 +57,19 @@ class AuthController extends forValidate
     {
         $this->validate($_REQUEST, 'login', [
            'email2' => 'required|exists:users',
-           'password2' => 'required|exists:users'
+           'password2' => 'required'
         ]);
 
+        $key = 'user_data';
+        $value = json_encode(Users::query()->where('email', '=', $_REQUEST['email2'])
+            ->select(['first_name', 'last_name', 'id', 'email']));
+        session::set($key, $value);
 
+        $key2 = 'access_token';
+        $value2 = generate_token();
+        session::set($key2, $value2);
+
+        redirect('/')->setHeader();
     }
 
     public function verify()
@@ -62,6 +79,7 @@ class AuthController extends forValidate
         $token = explode('token=', $params);
 
         $user = Users::query()->where('email_verified', '=', $token[1])->get();
+
         if ($user) {
             $user_token = $user[0]['email_verified'];
 

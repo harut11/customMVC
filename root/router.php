@@ -15,9 +15,6 @@ class router
     private function getController($action)
     {
         $controllerName = null;
-//        if ($action !== 'register') {
-//            session::delete('flush');
-//        }
 
         switch ($action) {
             case 'login':
@@ -25,18 +22,26 @@ class router
                 $controllerName = 'Auth';
                 break;
             case 'register':
+                middleware('auth');
+                $controllerName = 'Auth';
+                break;
+            case 'logout':
+                middleware('auth');
                 $controllerName = 'Auth';
                 break;
             case 'index':
+                session::delete('flush');
                 $controllerName = 'Home';
                 break;
             case 'registerSubmit':
+                middleware('auth');
                 $controllerName = 'Auth';
                 break;
             case 'verify':
                 $controllerName = 'Auth';
                 break;
             case 'loginSubmit':
+                middleware('auth');
                 $controllerName = 'Auth';
         }
 

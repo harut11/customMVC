@@ -7,10 +7,6 @@ class session
     public function __construct()
     {
         session_start();
-//        $_SESSION['previous_url'] = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : null;
-//        if (!preg_match('/\.(css|js|img|fonts|ico|map)$/', $_SERVER['REQUEST_URI'])) {
-//            $_SESSION['current_url'] = $_SERVER['REQUEST_URI'];
-//        }
     }
 
     public static function set($key, $value)
